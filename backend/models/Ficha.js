@@ -1,8 +1,9 @@
 class Ficha {
-  constructor(idFicha = 0, nome = '') {
-    this.idFicha = idFicha
+  constructor(idFicha, nome, descricao, exercicios) {
+    this.idficha = idficha
     this.nome = nome
-    this.exercicios = []
+    this.descricao = descricao
+    this.exercicios = exercicios
   }
 }
 

@@ -1,0 +1,15 @@
+$kind: http-request
+name: Cadastrar Usuário
+method: POST
+url: http://localhost:3000/api/v1/usuario/cadastrar
+order: 1000
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "nome": "Luiz Gustavo",
+      "email": "luizgustavo@email.com",
+      "senha": "senha123"
+    }

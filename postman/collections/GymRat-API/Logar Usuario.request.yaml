@@ -1,0 +1,12 @@
+$kind: http-request
+description: ""
+url: http://localhost:3000/api/v1/usuario/logar
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "email": "lucas@email.com",
+      "senha": "senha123"
+    }
+order: 2000
