@@ -56,7 +56,7 @@ const MedidasDAO = {
 
   async removerMedida(id_medida) {
     const resultado = await pool.query(
-      'DELETE FROM public."Medidas" WHERE "id_medida" = $1',
+      'DELETE FROM public."Medidas" WHERE "id_medida" = $1 RETURNING *',
       [id_medida]
     )
 
@@ -69,7 +69,8 @@ const MedidasDAO = {
 
     return {
       sucess: true,
-      mensagem: 'Medida deletada com sucesso'
+      mensagem: 'Medida deletada com sucesso',
+      dados: resultado.rows[0]
     }
   }
 }

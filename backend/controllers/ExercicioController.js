@@ -1,4 +1,10 @@
 const exercicioDAO = require('../daos/ExercicioDAO')
+const Exercicio = require('../models/Exercicio')
+
+const modelarExercicio = (registro) => new Exercicio(
+    registro.id_exercicio, registro.nome, registro.carga, registro.series,
+    registro.repeticoes, registro.grupo_muscular
+)
 
 const exercicioController = {
     async inserirExercicio(req, res) {
@@ -10,10 +16,10 @@ const exercicioController = {
         }
 
         try {
-            const exercicio = await exercicioDAO.criarExercicio(
+            const resultado = await exercicioDAO.criarExercicio(
                 nome.trim(), grupo_muscular.trim(), Number(carga), Number(series), Number(repeticoes), req.user.id
             )
-            return res.status(201).json({ exercicio })
+            return res.status(201).json({ exercicio: modelarExercicio(resultado.dados) })
         } catch (e) {
             return res.status(500).json({ mensagem: 'Não foi possível cadastrar o exercício!' })
         }
@@ -21,7 +27,8 @@ const exercicioController = {
 
     async listarExercicios(req, res) {
         try {
-            const exercicios = await exercicioDAO.listarExercicios(req.user.id)
+            const resultado = await exercicioDAO.listarExercicios(req.user.id)
+            const exercicios = resultado.dados.map(modelarExercicio)
             return res.status(200).json({ exercicios })
         } catch (e) {
             return res.status(500).json({ mensagem: 'Não foi possível listar os exercícios!' })
@@ -33,9 +40,9 @@ const exercicioController = {
         if (!id_exercicio) return res.status(400).json({ mensagem: 'Campo inválido!' })
 
         try {
-            const resultado = await exercicioDAO.buscarExercicioPorId(id_exercicio, req.user.id)
-            if (!resultado.sucesso) return res.status(404).json({ mensagem: resultado.mensagem })
-            return res.status(200).json({ exercicio: resultado.exercicio })
+            const resultado = await exercicioDAO.buscarExercicioPorId(id_exercicio)
+            if (!resultado.sucess) return res.status(404).json({ mensagem: resultado.mensagem })
+            return res.status(200).json({ exercicio: modelarExercicio(resultado.dados) })
         } catch (e) {
             return res.status(500).json({ mensagem: 'Não foi possível buscar o exercício!' })
         }
@@ -51,10 +58,10 @@ const exercicioController = {
 
         try {
             const resultado = await exercicioDAO.atualizarExercicio(
-                id_exercicio, nome.trim(), grupo_muscular.trim(), Number(carga), Number(series), Number(repeticoes), req.user.id
+                id_exercicio, nome.trim(), grupo_muscular.trim(), Number(carga), Number(series), Number(repeticoes)
             )
-            if (!resultado.sucesso) return res.status(404).json({ mensagem: resultado.mensagem })
-            return res.status(200).json({ exercicio: resultado.exercicio })
+            if (!resultado.sucess) return res.status(404).json({ mensagem: resultado.mensagem })
+            return res.status(200).json({ exercicio: modelarExercicio(resultado.dados) })
         } catch (e) {
             return res.status(500).json({ mensagem: 'Não foi possível editar o exercício!' })
         }
@@ -65,11 +72,31 @@ const exercicioController = {
         if (!id_exercicio) return res.status(400).json({ mensagem: 'Campo inválido!' })
 
         try {
-            const resultado = await exercicioDAO.removerExercicio(id_exercicio, req.user.id)
-            if (!resultado.sucesso) return res.status(404).json({ mensagem: resultado.mensagem })
-            return res.status(200).json({ mensagem: resultado.mensagem })
+            const resultado = await exercicioDAO.removerExercicio(id_exercicio)
+            if (!resultado.sucess) return res.status(404).json({ mensagem: resultado.mensagem })
+            return res.status(200).json({ exercicio: modelarExercicio(resultado.dados) })
         } catch (e) {
             return res.status(500).json({ mensagem: 'Não foi possível remover o exercício!' })
+        }
+    },
+
+    async getByCategoria(req, res) {
+        const categoria = req.params.categoria
+        if (typeof categoria !== 'string' || !categoria.trim()) {
+            return res.status(400).json({ mensagem: 'Categoria inválida!' })
+        }
+
+        try {
+            const resultado = await exercicioDAO.listarExerciciosPorGrupoMuscular(categoria.trim())
+            if (!resultado.sucess) {
+                return res.status(404).json({ mensagem: resultado.mensagem })
+            }
+
+            const exercicios = resultado.dados.map(modelarExercicio)
+
+            return res.status(200).json({ exercicios })
+        } catch (e) {
+            return res.status(500).json({ mensagem: 'Não foi possível buscar exercícios por categoria!' })
         }
     }
 }

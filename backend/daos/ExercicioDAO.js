@@ -54,9 +54,17 @@ const ExercicioDAO = {
     }
   },
 
+  async listarExercicios(id_usuario) {
+    const resultado = await pool.query(
+      'SELECT * FROM public."Exercicio" WHERE id_usuario = $1 ORDER BY id_exercicio',
+      [id_usuario]
+    )
+    return { sucess: true, mensagem: 'Exercícios listados com sucesso', dados: resultado.rows }
+  },
+
   async removerExercicio(id_exercicio) {
     const resultado = await pool.query(
-      'DELETE FROM public."Exercicio" WHERE id_exercicio = $1',
+      'DELETE FROM public."Exercicio" WHERE id_exercicio = $1 RETURNING *',
       [id_exercicio]
     )
 
@@ -69,7 +77,8 @@ const ExercicioDAO = {
 
     return {
       sucess: true,
-      mensagem: 'Exercício deletado com sucesso'
+      mensagem: 'Exercício deletado com sucesso',
+      dados: resultado.rows[0]
     }
   },
 

@@ -3,8 +3,9 @@ const pool = require('../database/connection')
 const fichaExercicioDAO = {
     async adicionarExercicioAFicha(id_ficha, id_exercicio) {
         const resultado = await pool.query(
-            'INSERT INTO public."Ficha_Exercicio" VALUES ($1, $2) RETURNING *', [id_ficha, id_exercicio]
+            'INSERT INTO public."Ficha_Exercicio" (id_ficha, id_exercicio) VALUES ($1, $2) RETURNING *', [id_ficha, id_exercicio]
         )
+     
 
         if (resultado.rowCount === 0) {
             return {

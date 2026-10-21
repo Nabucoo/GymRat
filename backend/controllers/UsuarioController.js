@@ -3,7 +3,6 @@ const Usuario = require('../models/Usuario')
 const usuarioAuth = require('../services/usuarioAuthService')
 
 const usuarioController = {
-  //const usuarioDAO = usuarioDAO
   
   async inserirUsuario(req, res) {
     if (!req.body) {
@@ -30,8 +29,9 @@ const usuarioController = {
       email: usuario.email,
       senha: usuario.senha,
       })
-      await usuarioDAO.criarUsuario(userData.id, userData.email, usuario.nome)
-      return res.status(201).json({'mensagem': "Usuario criado"})
+      const resultado = await usuarioDAO.criarUsuario(userData.id, userData.email, usuario.nome)
+      const usuarioCriado = new Usuario(resultado.dados.email, resultado.dados.nome, '', resultado.dados.id_usuario)
+      return res.status(201).json({ usuario: usuarioCriado })
     } catch (e) {
       return res.status(500).json({'mensagem': "Não foi possível concluir o cadastro!"})
     }
@@ -59,12 +59,13 @@ const usuarioController = {
         email: email,
         senha: senha
       })
-      await usuarioDAO.buscarUsuarioPorId(userData.usuario.id)
-      return res.status(200).json({"mensagem": "usuario logado com sucesso!", "token": userData.sessao.access_token})
+      const resultado = await usuarioDAO.buscarUsuarioPorId(userData.usuario.id)
+      if (!resultado.sucess) return res.status(404).json({ mensagem: resultado.mensagem })
+      const usuarioLogado = new Usuario(resultado.dados.email, resultado.dados.nome, '', resultado.dados.id_usuario)
+      return res.status(200).json({ usuario: usuarioLogado, token: userData.sessao.access_token })
     } catch (e) {
       return res.status(401).json({"mensagem": "não foi possível logar!"})
     }
-
   },
 
   buscarUsuario(email) {},
