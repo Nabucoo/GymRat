@@ -15,10 +15,10 @@ const MedidasDAO = {
     }
   },
 
-  async buscarMedidaPorId(id_medida) {
+  async buscarMedidaPorId(id_medida, id_usuario) {
     const resultado = await pool.query(
-      'SELECT * FROM public."Medidas" WHERE "id_medida" = $1',
-      [id_medida]
+      'SELECT * FROM public."Medidas" WHERE "id_medida" = $1 AND id_usuario = $2',
+      [id_medida, id_usuario]
     )
 
     if (resultado.rowCount === 0) {
@@ -35,10 +35,10 @@ const MedidasDAO = {
     }
   },
 
-  async atualizarMedida(id_medida, altura, peso, data) {
+  async atualizarMedida(id_medida, altura, peso, data, id_usuario) {
     const resultado = await pool.query(
-      'UPDATE public."Medidas" SET altura = $1, peso = $2, data = $3 WHERE "id_medida" = $4 RETURNING id_medida, altura, peso, data',
-      [altura, peso, data, id_medida]
+      'UPDATE public."Medidas" SET altura = $1, peso = $2, data = $3 WHERE "id_medida" = $4 AND id_usuario = $5 RETURNING id_medida, altura, peso, data',
+      [altura, peso, data, id_medida, id_usuario]
     )
 
     if (resultado.rowCount === 0) {
@@ -54,10 +54,10 @@ const MedidasDAO = {
     }
   },
 
-  async removerMedida(id_medida) {
+  async removerMedida(id_medida, id_usuario) {
     const resultado = await pool.query(
-      'DELETE FROM public."Medidas" WHERE "id_medida" = $1 RETURNING *',
-      [id_medida]
+      'DELETE FROM public."Medidas" WHERE "id_medida" = $1 AND id_usuario = $2 RETURNING *',
+      [id_medida, id_usuario]
     )
 
     if (resultado.rowCount === 0) {

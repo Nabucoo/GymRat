@@ -23,6 +23,10 @@ const medidasController = {
             const resultado = await medidasDAO.criarMedida(req.user.id, altura, peso, data)
             return res.status(201).json({ medida: modelarMedida(resultado.dados) })
         } catch (e) {
+            console.error('Falha ao cadastrar medida:', {
+                code: e.code,
+                message: e.message
+            })
             return res.status(500).json({ mensagem: 'Não foi possível concluir o cadastro de medida!' })
         }
     },
@@ -35,7 +39,7 @@ const medidasController = {
         }
 
         try {
-            const resultado = await medidasDAO.buscarMedidaPorId(Number(idMedida))
+            const resultado = await medidasDAO.buscarMedidaPorId(Number(idMedida), req.user.id)
             if (!resultado.sucess) {
                 return res.status(404).json({ mensagem: resultado.mensagem })
             }
@@ -59,7 +63,9 @@ const medidasController = {
         }
 
         try {
-            const resultado = await medidasDAO.atualizarMedida(Number(idMedida), altura, peso, data)
+            const resultado = await medidasDAO.atualizarMedida(
+                Number(idMedida), altura, peso, data, req.user.id
+            )
             if (!resultado.sucess) {
                 return res.status(404).json({ mensagem: resultado.mensagem })
             }
@@ -77,7 +83,7 @@ const medidasController = {
         }
 
         try {
-            const resultado = await medidasDAO.removerMedida(Number(idMedida))
+            const resultado = await medidasDAO.removerMedida(Number(idMedida), req.user.id)
             if (!resultado.sucess) {
                 return res.status(404).json({ mensagem: resultado.mensagem })
             }
