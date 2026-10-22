@@ -20,7 +20,8 @@ class HomePage:
             print("1. Fichas")
             print("2. Exercícios")
             print("3. Medidas")
-            print("4. Sair")
+            print("4. Deletar conta")
+            print("5. Sair")
             opcao = input("Escolha uma opção: ").strip()
 
             try:
@@ -31,6 +32,16 @@ class HomePage:
                 elif opcao == "3":
                     MedidasPage(self.api).mostrar()
                 elif opcao == "4":
+                    print("A exclusão da conta é permanente.")
+                    confirmacao = input("Digite EXCLUIR para confirmar: ").strip()
+                    if confirmacao != "EXCLUIR":
+                        print("Exclusão cancelada.")
+                        continue
+
+                    resultado = self.api.remover_usuario()
+                    print(resultado.get("mensagem", "Conta removida com sucesso."))
+                    return
+                elif opcao == "5":
                     print("Até mais!")
                     return
                 else:

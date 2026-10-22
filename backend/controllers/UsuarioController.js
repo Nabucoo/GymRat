@@ -68,11 +68,19 @@ const usuarioController = {
     }
   },
 
-  buscarUsuario(email) {},
+  async removerUsuario(req, res) {
+    try {
+      await usuarioDAO.removerUsuario(req.user.id)
 
-  editarUsuario(email, nome, senha) {},
+   
+      await usuarioAuth.apagarUsuario({ id: req.user.id })
 
-  removerUsuario(email) {},
+      return res.status(200).json({ mensagem: 'Usuário deletado com sucesso' })
+    } catch (e) {
+      console.error('Falha ao remover usuário:', { code: e.code, message: e.message })
+      return res.status(500).json({ mensagem: 'Não foi possível remover a conta!' })
+    }
+  },
 
 }
 

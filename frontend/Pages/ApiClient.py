@@ -122,3 +122,7 @@ class ApiClient:
         if str(self.medida_id) == str(id_medida):
             self.medida_id = None
         return resultado
+
+    # Conta
+    def remover_usuario(self):
+        return self.requisitar("DELETE", "/usuario/remover")
